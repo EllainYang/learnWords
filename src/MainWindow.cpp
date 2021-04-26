@@ -35,7 +35,6 @@ void MainWindow::setupCoreWidgets()
     mMainWidget->setLayout(mMainVBoxLayout);
 
     setCentralWidget(mMainWidget);
-    setupCoreWidgetsConnections();
 }
 
 void MainWindow::setupCoreWidgetsConnections()
@@ -43,7 +42,7 @@ void MainWindow::setupCoreWidgetsConnections()
     connect(mBranstormTrainButton, &QPushButton::clicked, this, &MainWindow::initBrainstormTraining);
     connect(mDictionaryStateButton, &QPushButton::clicked, this, &MainWindow::initDictionaryState);
 }
-#include <iostream>
+
 void MainWindow::trainStateDone(bool status)
 {
     // mTestStateIndx++;
@@ -68,11 +67,13 @@ void MainWindow::allTrainsDone()
 {
     // update database;
     setupCoreWidgets();
+    setupCoreWidgetsConnections();
 }
 
 void MainWindow::noActiveStates()
 {
     setupCoreWidgets();
+    setupCoreWidgetsConnections();
 }
 
 void MainWindow::initBrainstormTraining()
@@ -86,17 +87,18 @@ void MainWindow::initBrainstormTraining()
         mTrainStates[i].second = false;
     }
 
-    mTrainStates[0].first = new WelcomeTrain(mLWords, TrainState::Context(this, &mDBManager));
-    mTrainStates[1].first = new VariantTrain(mLWords, TrainState::Context(this, &mDBManager));
-    mTrainStates[2].first = new LetterToWordTrain(mLWords, TrainState::Context(this, &mDBManager));
+    mTrainStates[0].first = new WelcomeTrain(mLWords, State::Context(this, &mDBManager));
+    mTrainStates[1].first = new VariantTrain(mLWords, State::Context(this, &mDBManager));
+    mTrainStates[2].first = new LetterToWordTrain(mLWords, State::Context(this, &mDBManager));
     
     setCentralWidget(mTrainStates[0].first);
     // connect(mBrainTrain, SIGNAL(endStateSignal(bool)), this, SLOT(learnStateDone(bool)));
 }
-
+#include <QDebug>
 void MainWindow::initDictionaryState()
 {
-    dictState = new DictionaryState(&mDBManager);
+    qDebug() << "init dictionary!";
+    dictState = new DictionaryState(State::Context(this, &mDBManager));
     setCentralWidget(dictState);
 }
 

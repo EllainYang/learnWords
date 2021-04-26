@@ -1,12 +1,38 @@
 #include "DictionaryState.hpp"
 
 #include <QHeaderView>
+#include <QKeySequence>
 
-DictionaryState::DictionaryState(DatabaseManager* DBManager)
-: mDBManager(DBManager)
+#include "DatabaseManager.hpp"
+#include "MainWindow.hpp"
+
+DictionaryState::DictionaryState(State::Context context)
+: State(context)
 {
+    setupCoreWidgets();
+    setupConnections();
+}
+
+void DictionaryState::setupCoreWidgets()
+{
+    mMainVBoxLayout = new QVBoxLayout;
+    mSearchLineEdit = new QLineEdit;
+    mReturnButton = new QPushButton("Return");
+
+    setupDictTable();
+
+    mMainVBoxLayout->addWidget(mSearchLineEdit);
+    mMainVBoxLayout->addWidget(mDictTableView);
+    mMainVBoxLayout->addWidget(mReturnButton);
+
+    setLayout(mMainVBoxLayout);
+}
+
+void DictionaryState::setupDictTable()
+{
+    DatabaseManager* DBManager = getContext()->DBManager;
     mDictTableModel = new QSqlTableModel(0, DBManager->getDBConnection());
-    mDictTableModel->setTable(QString::fromStdString(mDBManager->getTableName()));
+    mDictTableModel->setTable(QString::fromStdString(DBManager->getTableName()));
     mDictTableModel->select();
     mDictTableModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
     mDictTableModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Word"));
@@ -16,14 +42,29 @@ DictionaryState::DictionaryState(DatabaseManager* DBManager)
     // mDictTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     mDictTableView = new QTableView();
-    mDictTableView->setModel(mDictTableModel);
+    mDictSortFitler = new QSortFilterProxyModel;
+
+    mDictSortFitler->setSourceModel(mDictTableModel);
+    mDictTableView->setModel(mDictSortFitler);
     mDictTableView->setSelectionMode(QAbstractItemView::SingleSelection);
     mDictTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     QHeaderView* header = mDictTableView->horizontalHeader();
     header->setStretchLastSection(true);
+}
 
-    QVBoxLayout* layout = new QVBoxLayout();
-    layout->addWidget(mDictTableView);
+void DictionaryState::setupConnections()
+{
+    connect(mSearchLineEdit, &QLineEdit::textChanged, this, &DictionaryState::searchWord);
+    connect(mReturnButton, &QPushButton::clicked, getContext()->window, &MainWindow::noActiveStates);
+}
 
-    setLayout(layout);
+void DictionaryState::searchWord()
+{
+    QString word = mSearchLineEdit->text();
+    // if (word.size() == 0) return;
+
+    QString filter = "^" + word + ".*$";
+    // mDictTableModel->setFilter(filter);
+    mDictSortFitler->setFilterKeyColumn(1);
+    mDictSortFitler->setFilterRegExp(filter);
 }

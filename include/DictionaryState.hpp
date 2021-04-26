@@ -2,26 +2,40 @@
 #define DICTIONARYSTATE_HPP
 
 #include "DatabaseManager.hpp"
+#include "State.hpp"
 
 #include <QWidget>
 #include <QLineEdit>
 #include <QSqlTableModel>
 #include <QTableView>
+#include <QSortFilterProxyModel>
 #include <QVBoxLayout>
+#include <QShortcut>
+#include <QPushButton>
 
-class DictionaryState : public QWidget
+class DictionaryState : public State
 {
     // Q_OBJECT
 
     public:
-                            DictionaryState(DatabaseManager* DBManager);
+                            DictionaryState(State::Context context);
 
+    private slots:
+        void                searchWord();
+
+    private:
+        void                setupCoreWidgets();
+        void                setupDictTable();
+        void                setupConnections();
     
     private:
-        DatabaseManager*    mDBManager;
+        QVBoxLayout*            mMainVBoxLayout;
+        QLineEdit*              mSearchLineEdit;
+        QSqlTableModel*         mDictTableModel;
+        QTableView*             mDictTableView;
+        QSortFilterProxyModel*  mDictSortFitler;   
 
-        QSqlTableModel*     mDictTableModel;
-        QTableView*         mDictTableView;
+        QPushButton*            mReturnButton;
 };
 
 #endif
