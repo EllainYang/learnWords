@@ -33,8 +33,13 @@ int RandomEngine::getRandom(int bound)
     return getRandom() % bound;
 }
 
-const std::string GetTrainTypeStatusName[1] = {
-    "BrainTrain",
+const std::string GetTrainTypeStatusName[6] = {
+    "NONE",
+    "WordIntro",
+    "WordVariants",
+    "MeaningVariants",
+    "LetterToWord",
+    "WordRain"
 };
 
 const Qt::Key charToKey[26] = {
@@ -77,3 +82,6 @@ const Qt::Key digitToKey[9] = {
     Qt::Key_8,
     Qt::Key_9,
 };
+
+const int WINDOW_WIDTH = 1000;
+const int WINDOW_HEIGHT = 480;

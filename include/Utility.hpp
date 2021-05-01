@@ -5,13 +5,20 @@
 
 #include <string>
 
-extern const std::string GetTrainTypeStatusName[1];
+extern const std::string GetTrainTypeStatusName[6];
 extern const Qt::Key charToKey[26];
 extern const Qt::Key digitToKey[9];
+extern const int WINDOW_WIDTH;
+extern const int WINDOW_HEIGHT;
 
 enum TrainingType
 {
-    Brainstorm = 0
+    None = 0,
+    WordIntro,
+    WordVariants,
+    MeaningVariants,
+    LetterToWord,
+    WordRain
 };
 
 struct LearnWord

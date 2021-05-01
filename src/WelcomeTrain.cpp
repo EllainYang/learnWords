@@ -15,12 +15,22 @@ void WelcomeTrain::setupCoreWidgets()
     mMainVBoxLayout = new QVBoxLayout;
     mWord = new QLabel(QString::fromStdString(getCurWord()));
     mWordMeaning = new QLabel(QString::fromStdString(getCurWordMeaning()));
-    mNextWordButton = new QPushButton("Next");
-    mNextWordButton->setShortcut(QKeySequence(Qt::Key_Return));
 
+    mWord->setAlignment(Qt::AlignCenter);
+    mWordMeaning->setAlignment(Qt::AlignCenter);
+
+
+    mNextWordButton = new QPushButton("Next", this);
+    mNextWordButton->setShortcut(QKeySequence(Qt::Key_Return));
+    // mNextWordButton->setFixedSize(0.8 * WINDOW_WIDTH, 40);
+    mNextWordButton->resize(0.8 * WINDOW_WIDTH, 40);
+    mNextWordButton->move(WINDOW_WIDTH / 2 - 0.4*WINDOW_WIDTH, WINDOW_HEIGHT / 1.5);
+    mNextWordButton->show();
+
+    mMainVBoxLayout->setAlignment(Qt::AlignCenter);
     mMainVBoxLayout->addWidget(mWord);
     mMainVBoxLayout->addWidget(mWordMeaning);
-    mMainVBoxLayout->addWidget(mNextWordButton);
+    // mMainVBoxLayout->addWidget(mNextWordButton);
 
     setLayout(mMainVBoxLayout);
 }

@@ -22,6 +22,7 @@ class DictionaryState : public State
 
     private slots:
         void                searchWord();
+        void                addWord();
 
     private:
         void                setupCoreWidgets();
@@ -29,13 +30,14 @@ class DictionaryState : public State
         void                setupConnections();
     
     private:
-        QVBoxLayout*            mMainVBoxLayout;
-        QLineEdit*              mSearchLineEdit;
-        QSqlTableModel*         mDictTableModel;
-        QTableView*             mDictTableView;
-        QSortFilterProxyModel*  mDictSortFitler;   
+        QVBoxLayout*                mMainVBoxLayout;
+        QLineEdit*                  mSearchLineEdit;
+        QSqlTableModel*             mDictTableModel;
+        QTableView*                 mDictTableView;
+        QSortFilterProxyModel*      mDictSortFitler; 
 
-        QPushButton*            mReturnButton;
+        QPushButton*                mWordAddbutton;  
+        QPushButton*                mReturnButton;
 };
 
 #endif

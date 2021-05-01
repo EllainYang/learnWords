@@ -1,50 +1,34 @@
-#include "VariantsTrain.hpp"
+#include "MeaningVariantsTrain.hpp"
 #include "MainWindow.hpp"
 
 #include <QColor>
 
-VariantTrain::VariantTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
+MeaningVariantsTrain::MeaningVariantsTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
 : TrainState(lWords, context, 1, parent)
 , mRandEngine()
 , mVariantsSize(5)
 {
     mRightMeaningIndx = mRandEngine.getRandom(mVariantsSize);
 
-    setStyleSheet(QString::fromStdString(
-        "QPushButton:pressed"\
-        "{"\
-            "border-style:solid;"\
-            "border-width:2px;"\
-            "color: rgb(0,175,0)"\
-        "}"));
-
-    setupPalettes();
     setupCoreWidgets();
     setupConnections();
 }
 
-void VariantTrain::setupPalettes()
-{
-    QPushButton tempButton;
-    mFailurePalette.setColor(QPalette::Button, QColor(Qt::red));
-    mSuccessPalette.setColor(QPalette::Button, QColor(Qt::green));
-    mDefaultPalette = tempButton.palette();
-}
-
-void VariantTrain::setupCoreWidgets()
+void MeaningVariantsTrain::setupCoreWidgets()
 {
     mWord = new QLabel(QString::fromStdString(getCurWord()));
 
     mVariantsVBoxLayout = new QVBoxLayout;
+    mVariantsVBoxLayout->setAlignment(Qt::AlignCenter);
     setupVariantButtons();
 
     mMainHBoxLayout = new QHBoxLayout;
-    mMainHBoxLayout->addWidget(mWord);
+    mMainHBoxLayout->addWidget(mWord, 0, Qt::AlignCenter);
     mMainHBoxLayout->addLayout(mVariantsVBoxLayout);
     setLayout(mMainHBoxLayout);
 }
 
-void VariantTrain::setupVariantButtons()
+void MeaningVariantsTrain::setupVariantButtons()
 {
     if (mVariantsSize >= 9)
     {
@@ -56,30 +40,34 @@ void VariantTrain::setupVariantButtons()
     {
         mMeaningVariantButtons[i] = new QPushButton(QString::number(i+1) + QString(") ") + QString("test"));
         mMeaningVariantButtons[i]->setShortcut(QKeySequence(digitToKey[i]));
-        connect(mMeaningVariantButtons[i], &QPushButton::clicked, this, &VariantTrain::askNextWord);
+        mMeaningVariantButtons[i]->setFixedSize(0.4 * WINDOW_WIDTH, 50);
+        connect(mMeaningVariantButtons[i], &QPushButton::clicked, this, &MeaningVariantsTrain::askNextWord);
 
         mVariantsVBoxLayout->addWidget(mMeaningVariantButtons[i]);
     }
     mMeaningVariantButtons[mRightMeaningIndx]->setText(QString::number(mRightMeaningIndx+1) + QString(")") + QString::fromStdString(getCurWordMeaning()));
     mMeaningVariantButtons[mRightMeaningIndx]->setShortcut(QKeySequence(digitToKey[mRightMeaningIndx]));
-
-
 }
-#include <QDebug>
-void VariantTrain::askNextWord()
+
+void MeaningVariantsTrain::askNextWord()
 {
     QPushButton* senderButton = qobject_cast<QPushButton*>(sender());
     size_t bIndx = senderButton->text().toStdString()[0] - '0' - 1;
     if (bIndx != mRightMeaningIndx)
     {
         recordMistake();
-        senderButton->setPalette(mFailurePalette);
+        senderButton->setStyleSheet(QString::fromStdString(
+        "QPushButton"\
+        "{"\
+            "border-style:solid;"\
+            "border-width:2px;"\
+            "color: rgb(175,0,0)"\
+        "}"));
         return;
     }
 
     bool circlePassed;
     bool status = selectNextUnlearnedWord(trainSuccess(), circlePassed);
-    qDebug() << "Status: " << status;
     if (circlePassed)
     {
         emit circlePassedSignal(status);
@@ -89,16 +77,22 @@ void VariantTrain::askNextWord()
     updateVariants();
 }
 
-void VariantTrain::updateWord()
+void MeaningVariantsTrain::updateWord()
 {
     mWord->setText(QString::fromStdString(getCurWord()));
 }
 
-void VariantTrain::updateVariants()
+void MeaningVariantsTrain::updateVariants()
 {
     for (auto& button : mMeaningVariantButtons)
     {
-        button->setPalette(mDefaultPalette);
+        button->setStyleSheet(QString::fromStdString(
+        "QPushButton"\
+        "{"\
+            "border-style:solid;"\
+            "border-width:2px;"\
+            "color: #b1b1b1"\
+        "}"));
     }
 
     mRightMeaningIndx = mRandEngine.getRandom(mVariantsSize);
@@ -106,7 +100,7 @@ void VariantTrain::updateVariants()
     mMeaningVariantButtons[mRightMeaningIndx]->setShortcut(QKeySequence(digitToKey[mRightMeaningIndx]));
 }
 
-void VariantTrain::setupConnections()
+void MeaningVariantsTrain::setupConnections()
 {
-    connect(this, &VariantTrain::circlePassedSignal, getContext()->window, &MainWindow::trainStateDone);
+    connect(this, &MeaningVariantsTrain::circlePassedSignal, getContext()->window, &MainWindow::trainStateDone);
 }

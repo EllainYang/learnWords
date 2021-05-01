@@ -62,18 +62,19 @@ void LetterToWordTrain::wordGuess()
         updateButtons();
         
     }
-    
 }
 
 void LetterToWordTrain::setupCoreWidgets()
 {
     mMainVBoxLayout = new QVBoxLayout;
     mWordMeaning = new QLabel(QString::fromStdString(getCurWordMeaning()));
-    mMainVBoxLayout->addWidget(mWordMeaning);
+    mMainVBoxLayout->addWidget(mWordMeaning, 0, Qt::AlignCenter);
 
     mLetterSlotsHBoxLayout = new QHBoxLayout;
     mLettersHBoxLayout = new QHBoxLayout;
     setupWordLetters();
+    mLetterSlotsHBoxLayout->setAlignment(Qt::AlignCenter);
+    mLettersHBoxLayout->setAlignment(Qt::AlignCenter);
     mMainVBoxLayout->addLayout(mLetterSlotsHBoxLayout);
     mMainVBoxLayout->addLayout(mLettersHBoxLayout);
 
@@ -139,6 +140,7 @@ void LetterToWordTrain::setupWordLetters()
         char letter = curWord[i];
 
         mWordLetterSlots[i] = new QPushButton();
+        mWordLetterSlots[i]->setFixedSize(40, 40);
         mLetterSlotsHBoxLayout->addWidget(mWordLetterSlots[i]);
 
         if (mWordLetters.find(letter) == mWordLetters.end())
@@ -146,6 +148,7 @@ void LetterToWordTrain::setupWordLetters()
             auto& mWordLetterButton = mWordLetters.insert(
                     std::make_pair(letter, std::make_pair(new QPushButton, 1))).first->second.first;
             mWordLetterButton = new QPushButton(QString(letter));
+            mWordLetterButton->setFixedSize(40, 40);
             mWordLetterButton->setShortcut(QKeySequence(charToKey[letter-'a']));
             // mLettersHBoxLayout->addWidget(mWordLetters[i]);
             connect(mWordLetterButton, &QPushButton::clicked, this, &LetterToWordTrain::wordGuess);

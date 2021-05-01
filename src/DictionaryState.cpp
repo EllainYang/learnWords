@@ -1,10 +1,14 @@
 #include "DictionaryState.hpp"
+#include "DatabaseManager.hpp"
+#include "MainWindow.hpp"
 
 #include <QHeaderView>
 #include <QKeySequence>
 
-#include "DatabaseManager.hpp"
-#include "MainWindow.hpp"
+#include <QHBoxLayout>
+#include <QInputDialog>
+#include <QDir>
+#include <QDebug>
 
 DictionaryState::DictionaryState(State::Context context)
 : State(context)
@@ -17,13 +21,22 @@ void DictionaryState::setupCoreWidgets()
 {
     mMainVBoxLayout = new QVBoxLayout;
     mSearchLineEdit = new QLineEdit;
+    mWordAddbutton = new QPushButton("ADD");
+    mWordAddbutton->setShortcut(QKeySequence(Qt::Key_Return));
+    mWordAddbutton->setFixedSize(80, 30);
     mReturnButton = new QPushButton("Return");
+    mReturnButton->setShortcut(QKeySequence(Qt::Key_Escape));
 
     setupDictTable();
 
-    mMainVBoxLayout->addWidget(mSearchLineEdit);
+    QHBoxLayout* horizontalLayout = new QHBoxLayout;
+    horizontalLayout->addWidget(mSearchLineEdit);
+    horizontalLayout->addWidget(mWordAddbutton);
+
+    mMainVBoxLayout->addLayout(horizontalLayout);
     mMainVBoxLayout->addWidget(mDictTableView);
     mMainVBoxLayout->addWidget(mReturnButton);
+
 
     setLayout(mMainVBoxLayout);
 }
@@ -37,7 +50,11 @@ void DictionaryState::setupDictTable()
     mDictTableModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
     mDictTableModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Word"));
     mDictTableModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Meaning"));
-    mDictTableModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Status"));
+    mDictTableModel->setHeaderData(3, Qt::Horizontal, QObject::tr("WordIntro"));
+    mDictTableModel->setHeaderData(4, Qt::Horizontal, QObject::tr("WordVariants"));
+    mDictTableModel->setHeaderData(5, Qt::Horizontal, QObject::tr("LetterToWord"));
+    mDictTableModel->setHeaderData(6, Qt::Horizontal, QObject::tr("WordRain"));
+
 
     // mDictTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
@@ -49,13 +66,41 @@ void DictionaryState::setupDictTable()
     mDictTableView->setSelectionMode(QAbstractItemView::SingleSelection);
     mDictTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     QHeaderView* header = mDictTableView->horizontalHeader();
-    header->setStretchLastSection(true);
+    header->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 void DictionaryState::setupConnections()
 {
     connect(mSearchLineEdit, &QLineEdit::textChanged, this, &DictionaryState::searchWord);
     connect(mReturnButton, &QPushButton::clicked, getContext()->window, &MainWindow::noActiveStates);
+    connect(mWordAddbutton, &QPushButton::clicked, this, &DictionaryState::addWord);
+}
+
+void DictionaryState::addWord()
+{
+    QString word = mSearchLineEdit->text();
+    if (word.size() == 0) return;
+
+    bool ok;
+    QString meaning = QInputDialog::getText(this, tr("Add meaning"),
+            tr("Word meaning: "), QLineEdit::Normal, "", &ok);
+
+    if (ok && !meaning.isEmpty())
+    {
+        int row = mDictTableModel->rowCount();
+        mDictTableModel->insertRow(row);
+        mDictTableModel->setData(mDictTableModel->index(row, 0), 0);
+        mDictTableModel->setData(mDictTableModel->index(row, 1), word);
+        mDictTableModel->setData(mDictTableModel->index(row, 2), meaning);
+        mDictTableModel->setData(mDictTableModel->index(row, 3), 0);
+        mDictTableModel->setData(mDictTableModel->index(row, 4), 0);
+        mDictTableModel->setData(mDictTableModel->index(row, 5), 0);
+        mDictTableModel->setData(mDictTableModel->index(row, 6), 0);
+        qDebug() << mDictTableModel->submitAll();
+        mDictTableModel->select();
+
+        mSearchLineEdit->setText("");
+    }
 }
 
 void DictionaryState::searchWord()

@@ -30,7 +30,10 @@ DatabaseManager::DatabaseManager()
                 "ID INT AUTO_INCREMENT,\n"\
                 "WORD VARCHAR(100) NOT NULL,\n"\
                 "MEANING VARCHAR(1000) NOT NULL,\n"\
-                "BrainTrain BOOL NOT NULL DEFAULT 0,\n"\
+                "WordIntro BOOL NOT NULL DEFAULT 0,\n"\
+                "WordVariants BOOL NOT NULL DEFAULT 0,\n"\
+                "LetterToWord BOOL NOT NULL DEFAULT 0,\n"\
+                "WordRain BOOL NOT NULL DEFAULT 0,\n"\
                 "PRIMARY KEY (ID)\n"
                 ") ENGINE=INNODB;";
 
@@ -48,7 +51,7 @@ int DatabaseManager::countWordsForTraining(TrainingType tType) const
 
 int DatabaseManager::countFullyLearnedWords() const
 {
-    QSqlQuery statement(QString("select count(1) from ") + QString::fromStdString(mTableName) + QString(" where ") + QString::fromStdString(GetTrainTypeStatusName[TrainingType::Brainstorm]) + QString(" = 1;"), mDBConnection);
+    QSqlQuery statement(QString("select count(1) from ") + QString::fromStdString(mTableName) + QString(" where ") + QString::fromStdString(GetTrainTypeStatusName[TrainingType::WordIntro]) + QString(" = 1;"), mDBConnection);
     statement.next();
     int cnt = statement.value(statement.record().indexOf("count(1)")).toString().toInt();
 
@@ -68,7 +71,7 @@ std::vector<LearnWord> DatabaseManager::generateWordsForBrainStorm()
 {
     std::vector<LearnWord> mWords;
 
-    QSqlQuery statement((std::string("select * from ") + mTableName + " where BrainTrain=0 limit 6;").c_str(), mDBConnection);
+    QSqlQuery statement((std::string("select * from ") + mTableName + " where WordIntro=0 limit 6;").c_str(), mDBConnection);
     QSqlRecord record = statement.record();
 
     if (statement.size() < 6)
@@ -80,7 +83,7 @@ std::vector<LearnWord> DatabaseManager::generateWordsForBrainStorm()
     {
         std::string word = statement.value(record.indexOf("WORD")).toString().toStdString();
         std::string meaning = statement.value(record.indexOf("MEANING")).toString().toStdString();
-        bool status = statement.value(record.indexOf("BrainTrain")).toBool();
+        bool status = statement.value(record.indexOf("WordIntro")).toBool();
 
         // std::cerr << word << " - " << meaning << " - " << status << std::endl;
         mWords.push_back(LearnWord(std::move(word), std::move(meaning), status));
