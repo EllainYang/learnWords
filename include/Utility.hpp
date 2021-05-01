@@ -24,11 +24,11 @@ enum TrainingType
 struct LearnWord
 {
     LearnWord();
-    LearnWord(std::string&& word, std::string&& meaning, bool status);
+    LearnWord(std::string&& word, std::string&& meaning, int attempts = 0);
 
     std::string     word;
     std::string     meaning;
-    bool            learnStatus;
+    int             attempts;
 };
 
 struct RandomEngine

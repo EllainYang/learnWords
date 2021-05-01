@@ -20,6 +20,8 @@ class DatabaseManager : private NonCopyable
         int                         countFullyLearnedWords() const;
         int                         countWords() const;
 
+        void                        setLearnWordsStatus(const std::vector<LearnWord>& lWords, TrainingType trainType);
+
         const std::string&          getDBName() const;
         const std::string&          getTableName() const;
         QSqlDatabase&               getDBConnection();

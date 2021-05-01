@@ -19,7 +19,7 @@ class LetterToWordTrain : public TrainState
     Q_OBJECT
 
     public:
-                LetterToWordTrain(const std::vector<LearnWord>& lWords, TrainState::Context context, QWidget* parent = 0);
+                LetterToWordTrain(std::vector<LearnWord>& lWords, TrainState::Context context, QWidget* parent = 0);
 
     private slots:
         void        wordGuess();

@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-LetterToWordTrain::LetterToWordTrain(const std::vector<LearnWord>& lWords, TrainState::Context context, QWidget* parent)
+LetterToWordTrain::LetterToWordTrain(std::vector<LearnWord>& lWords, TrainState::Context context, QWidget* parent)
 : TrainState(lWords, context, 2, parent)
 , mWordGuessIndx(0)
 {

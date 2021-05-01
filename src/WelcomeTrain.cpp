@@ -3,7 +3,7 @@
 
 #include <QKeySequence>
 
-WelcomeTrain::WelcomeTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
+WelcomeTrain::WelcomeTrain(std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
 : TrainState(lWords, context, 999, parent)
 {
     setupCoreWidgets();

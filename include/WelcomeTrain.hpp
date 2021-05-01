@@ -15,7 +15,7 @@ class WelcomeTrain : public TrainState
     Q_OBJECT
 
     public:
-                WelcomeTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent = 0);
+                WelcomeTrain(std::vector<LearnWord>& lWords, State::Context context, QWidget* parent = 0);
     
     private slots:
         void        askNextWord();

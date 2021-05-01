@@ -17,7 +17,7 @@ class MeaningVariantsTrain : public TrainState
     Q_OBJECT
 
     public:
-            MeaningVariantsTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent = 0);
+            MeaningVariantsTrain(std::vector<LearnWord>& lWords, State::Context context, QWidget* parent = 0);
     
     private slots:
         void        askNextWord();

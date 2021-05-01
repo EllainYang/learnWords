@@ -1,6 +1,6 @@
 #include "WordsRainTrain.hpp"
 
-WordsRainTrain::WordsRainTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
+WordsRainTrain::WordsRainTrain(std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
 : TrainState(lWords, context, 1, parent)
 , mRandEngine()
 , mVariantsSize(5)
@@ -67,6 +67,7 @@ void WordsRainTrain::askNextWord()
         emit circlePassedSignal(status);
     }
 
+    resetMistakes();
     updateWord();
     updateVariants();
 }

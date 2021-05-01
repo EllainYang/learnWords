@@ -2,18 +2,14 @@
 #define MAINWINDOW_HPP
 
 #include "DatabaseManager.hpp"
-#include "TrainState.hpp"
-#include "DictionaryState.hpp"
-#include "WordsRainTrain.hpp"
-#include "WordVariantsTrain.hpp"
-#include "MeaningVariantsTrain.hpp"
-#include "LetterToWordTrain.hpp"
 #include "Utility.hpp"
+#include "TrainState.hpp"
 
 #include <QMainWindow>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QWidget>
+#include <QStackedWidget>
 
 #include <vector>
 
@@ -57,16 +53,14 @@ class MainWindow : public QMainWindow
         QPushButton*                mDictionaryStateButton;
         QPushButton*                mWordsRainTrainButton;
 
-        WordVariantsTrain*          wordVariantsTrain;
-        MeaningVariantsTrain*       meaningVariantsTrain;
-        DictionaryState*            dictState;
-        WordsRainTrain*             wordsRainTrain;
-        LetterToWordTrain*          letterToWordTrain;
+
+        TrainingType                mCurrentTrainType;
+        std::vector<LearnWord>      mLWords;
+
+        QStackedWidget*             mMainWidgetStack;
 
         std::vector<std::pair<TrainState*, bool>>       mTrainStates;
         size_t                                          mTrainStateIndx;
-
-        TrainingType                mTrainType;
 };
 
 #endif

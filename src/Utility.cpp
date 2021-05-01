@@ -3,14 +3,14 @@
 #include <ctime>
 
 LearnWord::LearnWord()
-: learnStatus(false)
+: attempts(0)
 {
 }
 
-LearnWord::LearnWord(std::string&& word, std::string&& meaning, bool status)
+LearnWord::LearnWord(std::string&& word, std::string&& meaning, int attempts)
 : word(word)
 , meaning(meaning)
-, learnStatus(status)
+, attempts(attempts)
 {
 }
 

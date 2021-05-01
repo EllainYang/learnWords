@@ -1,5 +1,10 @@
 #include "MainWindow.hpp"
 #include "WelcomeTrain.hpp"
+#include "DictionaryState.hpp"
+#include "WordsRainTrain.hpp"
+#include "WordVariantsTrain.hpp"
+#include "MeaningVariantsTrain.hpp"
+#include "LetterToWordTrain.hpp"
 
 #include <QShortcut>
 #include <QKeySequence>
@@ -10,7 +15,7 @@
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , mTrainStateIndx(0)
-, mTrainType(TrainingType::None)
+, mCurrentTrainType(TrainingType::None)
 {
     qDebug() << QDir::currentPath();
     QFile file("../style.qss");
@@ -23,10 +28,13 @@ MainWindow::MainWindow(QWidget* parent)
 
     setupCoreWidgets();
     setupCoreWidgetsConnections();
+
 }
 
 void MainWindow::setupCoreWidgets()
 {
+    mMainWidgetStack = new QStackedWidget;
+
     mMainWidget = new QWidget;
     mMainVBoxLayout = new QVBoxLayout;
 
@@ -85,11 +93,17 @@ void MainWindow::trainStateDone(bool status)
     }
 }
 
+#include <iostream>
 void MainWindow::updateDatabase(bool status)
 {
     if (status == false) return;
 
-    
+    std::cerr << "update database:\n";
+    for (auto& lWord : mLWords)
+    {
+        std::cerr << lWord.word << " " << lWord.attempts << std::endl;
+    }
+    mDBManager.setLearnWordsStatus(mLWords, mCurrentTrainType);
 }
 
 void MainWindow::allTrainsDone()
@@ -107,9 +121,12 @@ void MainWindow::noActiveStates()
 
 void MainWindow::initBrainstormTraining()
 {
-    std::vector<LearnWord> mLWords = mDBManager.generateWordsForBrainStorm();
+    mCurrentTrainType = TrainingType::WordIntro;
+
+    mLWords = mDBManager.generateWordsForBrainStorm();
 
     const int size = 3;
+    mTrainStates.clear();
     mTrainStates.resize(size);
     for (int i = 0; i < size; ++i)
     {
@@ -120,47 +137,84 @@ void MainWindow::initBrainstormTraining()
     mTrainStates[1].first = new MeaningVariantsTrain(mLWords, State::Context(this, &mDBManager));
     mTrainStates[2].first = new LetterToWordTrain(mLWords, State::Context(this, &mDBManager));
     
-    setCentralWidget(mTrainStates[0].first);
+    // setCentralWidget(mTrainStates[0].first);
+    for (int i = 0; i < size; ++i)
+    {
+        mMainWidgetStack->addWidget(mTrainStates[i].first);
+    }
+
+    setCentralWidget(mMainWidgetStack);
     // connect(mBrainTrain, SIGNAL(endStateSignal(bool)), this, SLOT(learnStateDone(bool)));
 }
 
 void MainWindow::initWordVariantsTraining()
 {
-    std::vector<LearnWord> mLWords = mDBManager.generateWordsForBrainStorm();
+    mCurrentTrainType = TrainingType::WordVariants;
 
-    wordVariantsTrain = new WordVariantsTrain(mLWords, State::Context(this, &mDBManager));
-    setCentralWidget(wordVariantsTrain);
+    mLWords = mDBManager.generateWordsForBrainStorm();
+
+    mTrainStates.clear();
+    mTrainStates.resize(1);
+    mTrainStates[0].first = new WordVariantsTrain(mLWords, State::Context(this, &mDBManager));
+    mTrainStates[0].second = false;
+
+    mMainWidgetStack->addWidget(mTrainStates[0].first);
+    setCentralWidget(mMainWidgetStack);
 }
 
 void MainWindow::initMeaningVariantsTraining()
 {
-    std::vector<LearnWord> mLWords = mDBManager.generateWordsForBrainStorm();
+    mCurrentTrainType = TrainingType::MeaningVariants;
 
-    meaningVariantsTrain = new MeaningVariantsTrain(mLWords, State::Context(this, &mDBManager));
-    setCentralWidget(meaningVariantsTrain);
+    mLWords = mDBManager.generateWordsForBrainStorm();
+
+    mTrainStates.clear();
+    mTrainStates.resize(1);
+    mTrainStates[0].first = new MeaningVariantsTrain(mLWords, State::Context(this, &mDBManager));
+    mTrainStates[0].second = false;
+
+    mMainWidgetStack->addWidget(mTrainStates[0].first);
+    setCentralWidget(mMainWidgetStack);
 }
 
 void MainWindow::initLetterToWordTraining()
 {
-    std::vector<LearnWord> mLWords = mDBManager.generateWordsForBrainStorm();
+    mCurrentTrainType = TrainingType::LetterToWord;
 
-    letterToWordTrain = new LetterToWordTrain(mLWords, State::Context(this, &mDBManager));
-    setCentralWidget(letterToWordTrain);
+    mLWords = mDBManager.generateWordsForBrainStorm();
+
+    mTrainStates.clear();
+    mTrainStates.resize(1);
+    mTrainStates[0].first = new LetterToWordTrain(mLWords, State::Context(this, &mDBManager));
+    mTrainStates[0].second = false;
+
+    mMainWidgetStack->addWidget(mTrainStates[0].first);
+    setCentralWidget(mMainWidgetStack);
 }
 
 void MainWindow::initWordsRainTraining()
 {
-    std::vector<LearnWord> mLWords = mDBManager.generateWordsForBrainStorm();
+    mCurrentTrainType = TrainingType::WordRain;
 
-    wordsRainTrain = new WordsRainTrain(mLWords, State::Context(this, &mDBManager));
-    setCentralWidget(wordsRainTrain);
+    mLWords = mDBManager.generateWordsForBrainStorm();
+
+    mTrainStates.clear();
+    mTrainStates.resize(1);
+    mTrainStates[0].first = new WordsRainTrain(mLWords, State::Context(this, &mDBManager));
+    mTrainStates[0].second = false;
+
+
+    mMainWidgetStack->addWidget(mTrainStates[0].first);
+
+
+    setCentralWidget(mMainWidgetStack);
 }
 
 #include <QDebug>
 void MainWindow::initDictionaryState()
 {
     qDebug() << "init dictionary!";
-    dictState = new DictionaryState(State::Context(this, &mDBManager));
+    DictionaryState* dictState = new DictionaryState(State::Context(this, &mDBManager));
     setCentralWidget(dictState);
 }
 
@@ -174,7 +228,8 @@ bool MainWindow::nextTrainState()
 
     bool isAllDone = (indx == mTrainStateIndx && mTrainStates[indx].second == true);
     mTrainStateIndx = indx;
-    setCentralWidget(mTrainStates[mTrainStateIndx].first);
+    mMainWidgetStack->setCurrentIndex(mTrainStateIndx);
+    // setCentralWidget(mTrainStates[mTrainStateIndx].first);
 
     return isAllDone;
 }

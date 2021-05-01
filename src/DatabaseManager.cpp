@@ -7,14 +7,17 @@
 
 #include <iostream>
 
+#define DATABASE_NAME   "dictionary_db"
+#define TABLE_NAME      "dict"
+
 DatabaseManager::DatabaseManager()
-: mDBName("dictionary_db")
-, mTableName("dict")
+: mDBName(DATABASE_NAME)
+, mTableName(TABLE_NAME)
 {
     mDBConnection = QSqlDatabase::addDatabase("QMYSQL", "dictionary");
 
     mDBConnection.setHostName("127.0.0.1");
-    mDBConnection.setDatabaseName(mDBName.c_str());
+    mDBConnection.setDatabaseName(DATABASE_NAME);
     mDBConnection.setUserName("root");
     mDBConnection.setPassword("");
     mDBConnection.setPort(3306);
@@ -28,10 +31,11 @@ DatabaseManager::DatabaseManager()
    QString table_definition = "USE dictionary_db;\n"\
                 "CREATE TABLE IF NOT EXISTS dict (\n"\
                 "ID INT AUTO_INCREMENT,\n"\
-                "WORD VARCHAR(100) NOT NULL,\n"\
+                "WORD VARCHAR(100) NOT NULL UNIQUE,\n"\
                 "MEANING VARCHAR(1000) NOT NULL,\n"\
                 "WordIntro BOOL NOT NULL DEFAULT 0,\n"\
                 "WordVariants BOOL NOT NULL DEFAULT 0,\n"\
+                "MeaningVariants BOOL NOT NULL DEFAULT 0,\n"\
                 "LetterToWord BOOL NOT NULL DEFAULT 0,\n"\
                 "WordRain BOOL NOT NULL DEFAULT 0,\n"\
                 "PRIMARY KEY (ID)\n"
@@ -89,6 +93,19 @@ std::vector<LearnWord> DatabaseManager::generateWordsForBrainStorm()
         mWords.push_back(LearnWord(std::move(word), std::move(meaning), status));
     }
     return mWords;
+}
+
+void DatabaseManager::setLearnWordsStatus(const std::vector<LearnWord>& lWords, TrainingType trainType)
+{
+    QSqlQuery update_statement(mDBConnection);
+    update_statement.prepare(QString("update " TABLE_NAME " set %1=:newStatus WHERE WORD=:word").arg(QString::fromStdString(GetTrainTypeStatusName[trainType])));
+    for (auto& lWord : lWords)
+    {
+        update_statement.bindValue(":newStatus", lWord.attempts == 0);
+        update_statement.bindValue(":word", QString::fromStdString(lWord.word));
+        qDebug() << update_statement.executedQuery();
+        update_statement.exec();
+    }
 }
 
 const std::string& DatabaseManager::getDBName() const

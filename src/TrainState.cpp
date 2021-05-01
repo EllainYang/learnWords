@@ -2,15 +2,15 @@
 #include "MainWindow.hpp"
 #include "DatabaseManager.hpp"
 
-TrainState::TrainState(const std::vector<LearnWord>& lWords, State::Context context, int maxMistakes, QWidget* parent)
+TrainState::TrainState(std::vector<LearnWord>& lWords, State::Context context, int maxMistakes, QWidget* parent)
 : State(context, parent)
 , mLWords(lWords)
+, mLWordsStatus(lWords.size(), false)
 , mLWordIndx(0)
 , mCurLWord(&mLWords[mLWordIndx])
 , mMistakes(0)
 , mMaxMistakes(maxMistakes)
 {
-    
 }
 
 void TrainState::endState(bool status)
@@ -20,18 +20,18 @@ void TrainState::endState(bool status)
 
 bool TrainState::selectNextUnlearnedWord(bool success, bool& circlePassed)
 {
-    mLWords[mLWordIndx].learnStatus = success;
+    mLWordsStatus[mLWordIndx] = success;
 
     size_t indx = mLWordIndx;
     do
     {
         indx = (indx + 1) % mLWords.size();
-    } while (mLWords[indx].learnStatus && indx != mLWordIndx);
+    } while (mLWordsStatus[indx] && indx != mLWordIndx);
 
 
     mCurLWord = &mLWords[indx];
     circlePassed = (indx <= mLWordIndx);
-    bool isAllTrue = indx == mLWordIndx && mLWords[indx].learnStatus == true;
+    bool isAllTrue = indx == mLWordIndx && mLWordsStatus[indx] == true;
     mLWordIndx = indx;
 
     return isAllTrue;
@@ -50,6 +50,7 @@ const std::string& TrainState::getCurWordMeaning() const
 void TrainState::recordMistake()
 {
     mMistakes++;
+    mCurLWord->attempts++;
 }
 
 void TrainState::resetMistakes()

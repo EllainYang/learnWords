@@ -1,6 +1,7 @@
 #include "DictionaryState.hpp"
 #include "DatabaseManager.hpp"
 #include "MainWindow.hpp"
+#include "Utility.hpp"
 
 #include <QHeaderView>
 #include <QKeySequence>
@@ -50,13 +51,14 @@ void DictionaryState::setupDictTable()
     mDictTableModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
     mDictTableModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Word"));
     mDictTableModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Meaning"));
-    mDictTableModel->setHeaderData(3, Qt::Horizontal, QObject::tr("WordIntro"));
-    mDictTableModel->setHeaderData(4, Qt::Horizontal, QObject::tr("WordVariants"));
-    mDictTableModel->setHeaderData(5, Qt::Horizontal, QObject::tr("LetterToWord"));
-    mDictTableModel->setHeaderData(6, Qt::Horizontal, QObject::tr("WordRain"));
+    mDictTableModel->setHeaderData(3, Qt::Horizontal, QObject::tr(GetTrainTypeStatusName[WordIntro].c_str()));
+    mDictTableModel->setHeaderData(4, Qt::Horizontal, QObject::tr(GetTrainTypeStatusName[WordVariants].c_str()));
+    mDictTableModel->setHeaderData(5, Qt::Horizontal, QObject::tr(GetTrainTypeStatusName[MeaningVariants].c_str()));
+    mDictTableModel->setHeaderData(6, Qt::Horizontal, QObject::tr(GetTrainTypeStatusName[LetterToWord].c_str()));
+    mDictTableModel->setHeaderData(7, Qt::Horizontal, QObject::tr(GetTrainTypeStatusName[WordRain].c_str()));
 
 
-    // mDictTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    mDictTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     mDictTableView = new QTableView();
     mDictSortFitler = new QSortFilterProxyModel;

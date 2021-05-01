@@ -15,7 +15,7 @@
 class WordsRainTrain : public TrainState
 {
     public:
-                WordsRainTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent = 0);
+                WordsRainTrain(std::vector<LearnWord>& lWords, State::Context context, QWidget* parent = 0);
     
     private slots:
         void        askNextWord();

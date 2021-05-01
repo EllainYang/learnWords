@@ -3,7 +3,7 @@
 
 #include <QColor>
 
-MeaningVariantsTrain::MeaningVariantsTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
+MeaningVariantsTrain::MeaningVariantsTrain(std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
 : TrainState(lWords, context, 1, parent)
 , mRandEngine()
 , mVariantsSize(5)
@@ -56,6 +56,7 @@ void MeaningVariantsTrain::askNextWord()
     if (bIndx != mRightMeaningIndx)
     {
         recordMistake();
+        
         senderButton->setStyleSheet(QString::fromStdString(
         "QPushButton"\
         "{"\
@@ -73,6 +74,7 @@ void MeaningVariantsTrain::askNextWord()
         emit circlePassedSignal(status);
     }
 
+    resetMistakes();
     updateWord();
     updateVariants();
 }

@@ -11,7 +11,7 @@ class TrainState : public State
     Q_OBJECT
 
     public:
-        TrainState(const std::vector<LearnWord>& lWords, State::Context context, int maxMistakes, QWidget* parent = 0);
+        TrainState(std::vector<LearnWord>& lWords, State::Context context, int maxMistakes, QWidget* parent = 0);
     
     signals:
         void    endStateSignal(bool status);
@@ -30,7 +30,8 @@ class TrainState : public State
         bool                    trainSuccess() const;
 
     private:
-        std::vector<LearnWord>      mLWords;
+        std::vector<LearnWord>&     mLWords;
+        std::vector<bool>           mLWordsStatus;
         size_t                      mLWordIndx;
         LearnWord*                  mCurLWord;
 

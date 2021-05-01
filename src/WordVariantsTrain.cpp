@@ -3,7 +3,7 @@
 
 #include <QColor>
 
-WordVariantsTrain::WordVariantsTrain(const std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
+WordVariantsTrain::WordVariantsTrain(std::vector<LearnWord>& lWords, State::Context context, QWidget* parent)
 : TrainState(lWords, context, 1, parent)
 , mRandEngine()
 , mVariantsSize(5)
@@ -84,6 +84,7 @@ void WordVariantsTrain::askNextWord()
         emit circlePassedSignal(status);
     }
 
+    resetMistakes();
     updateWord();
     updateVariants();
 }
