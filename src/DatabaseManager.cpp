@@ -25,11 +25,11 @@ DatabaseManager::DatabaseManager()
     if (!mDBConnection.open())
     {
         qDebug() << mDBConnection.lastError();
-        throw std::runtime_error(std::string("Cannot open database: ") + mDBConnection.databaseName().toStdString());
+        throw std::runtime_error("Cannot open database: " DATABASE_NAME);
     }
     
-   QString table_definition = "USE dictionary_db;\n"\
-                "CREATE TABLE IF NOT EXISTS dict (\n"\
+   QString table_definition = "USE " DATABASE_NAME ";\n"\
+                "CREATE TABLE IF NOT EXISTS " TABLE_NAME " (\n"\
                 "ID INT AUTO_INCREMENT,\n"\
                 "WORD VARCHAR(100) NOT NULL UNIQUE,\n"\
                 "MEANING VARCHAR(1000) NOT NULL,\n"\
@@ -46,7 +46,7 @@ DatabaseManager::DatabaseManager()
 
 int DatabaseManager::countWordsForTraining(TrainingType tType) const
 {
-    QSqlQuery statement((std::string("select count(1) from ") + mTableName + " where " + GetTrainTypeStatusName[tType] + " = 0;").c_str(), mDBConnection);
+    QSqlQuery statement((std::string("select count(1) from ") + TABLE_NAME + " where " + GetTrainTypeStatusName[tType] + " = 0;").c_str(), mDBConnection);
     statement.next();
     int cnt = statement.value(statement.record().indexOf("count(1)")).toString().toInt();
 
@@ -55,7 +55,7 @@ int DatabaseManager::countWordsForTraining(TrainingType tType) const
 
 int DatabaseManager::countFullyLearnedWords() const
 {
-    QSqlQuery statement(QString("select count(1) from ") + QString::fromStdString(mTableName) + QString(" where ") + QString::fromStdString(GetTrainTypeStatusName[TrainingType::WordIntro]) + QString(" = 1;"), mDBConnection);
+    QSqlQuery statement(QString("select count(1) from ") + QString(TABLE_NAME) + QString(" where ") + QString::fromStdString(GetTrainTypeStatusName[TrainingType::WordIntro]) + QString(" = 1;"), mDBConnection);
     statement.next();
     int cnt = statement.value(statement.record().indexOf("count(1)")).toString().toInt();
 
@@ -64,7 +64,7 @@ int DatabaseManager::countFullyLearnedWords() const
 
 int DatabaseManager::countWords() const
 {
-    QSqlQuery statement(QString("select count(1) from ") + QString::fromStdString(mTableName) + QString(";"), mDBConnection);
+    QSqlQuery statement("select count(1) from " TABLE_NAME ";", mDBConnection);
     statement.next();
     int cnt = statement.value(statement.record().indexOf("count(1)")).toString().toInt();
 
