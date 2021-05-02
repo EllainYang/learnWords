@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
         void        setupCoreWidgets();
         void        setupCoreWidgetsConnections();
 
-        void        initBrainstormTraining();
+        void        initWordIntroTraining();
         void        initWordVariantsTraining();
         void        initMeaningVariantsTraining();
         void        initLetterToWordTraining();

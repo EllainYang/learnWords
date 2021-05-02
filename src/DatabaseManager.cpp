@@ -71,11 +71,21 @@ int DatabaseManager::countWords() const
     return cnt;
 }
 
-std::vector<LearnWord> DatabaseManager::generateWordsForBrainStorm()
+std::vector<LearnWord> DatabaseManager::generateWordsForTraining(TrainingType tType) const
 {
     std::vector<LearnWord> mWords;
 
-    QSqlQuery statement((std::string("select * from ") + mTableName + " where WordIntro=0 limit 6;").c_str(), mDBConnection);
+    int wAmount = 10; // 10 words for any training except those listed below
+    if (tType == TrainingType::WordIntro)
+    {
+        wAmount = 6;
+    }
+    else if (tType == TrainingType::WordRain)
+    {
+        wAmount = 30;
+    }
+
+    QSqlQuery statement(QString("select * from " TABLE_NAME " where %1=0 limit %2;").arg(QString::fromStdString(GetTrainTypeStatusName[tType]),QString::number(wAmount)), mDBConnection);
     QSqlRecord record = statement.record();
 
     if (statement.size() < 6)
@@ -89,7 +99,6 @@ std::vector<LearnWord> DatabaseManager::generateWordsForBrainStorm()
         std::string meaning = statement.value(record.indexOf("MEANING")).toString().toStdString();
         bool status = statement.value(record.indexOf("WordIntro")).toBool();
 
-        // std::cerr << word << " - " << meaning << " - " << status << std::endl;
         mWords.push_back(LearnWord(std::move(word), std::move(meaning), status));
     }
     return mWords;
@@ -103,7 +112,6 @@ void DatabaseManager::setLearnWordsStatus(const std::vector<LearnWord>& lWords, 
     {
         update_statement.bindValue(":newStatus", lWord.attempts == 0);
         update_statement.bindValue(":word", QString::fromStdString(lWord.word));
-        qDebug() << update_statement.executedQuery();
         update_statement.exec();
     }
 }

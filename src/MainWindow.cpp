@@ -38,18 +38,24 @@ void MainWindow::setupCoreWidgets()
     mMainWidget = new QWidget;
     mMainVBoxLayout = new QVBoxLayout;
 
-    int brainstormWords = mDBManager.countWordsForTraining(TrainingType::WordIntro);
-    mWordIntroTrainButton = new QPushButton(QString("WordIntro (") + QString::number(brainstormWords) + QString(")"));
+    int wordsForTrain = mDBManager.countWordsForTraining(TrainingType::WordIntro);
+    mWordIntroTrainButton = new QPushButton(QString("WordIntro (") + QString::number(wordsForTrain) + QString(")"));
     mWordIntroTrainButton->setFixedSize(0.9 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
 
-    mWordVariantsTrainButton = new QPushButton(QString("WordVariants"));
+    wordsForTrain = mDBManager.countWordsForTraining(TrainingType::WordVariants);
+    mWordVariantsTrainButton = new QPushButton(QString("WordVariants (") + QString::number(wordsForTrain) + QString(")"));
     mWordVariantsTrainButton->setFixedSize(0.9 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mMeaningVariantsTrainButton = new QPushButton(QString("MeaningVariants"));
+
+    wordsForTrain = mDBManager.countWordsForTraining(TrainingType::MeaningVariants);
+    mMeaningVariantsTrainButton = new QPushButton(QString("MeaningVariants (") + QString::number(wordsForTrain) + QString(")"));
     mMeaningVariantsTrainButton->setFixedSize(0.9 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mLetterToWordTrainButton = new QPushButton(QString("LetterToWordTrain"));
+
+    wordsForTrain = mDBManager.countWordsForTraining(TrainingType::LetterToWord);
+    mLetterToWordTrainButton = new QPushButton(QString("LetterToWordTrain (") + QString::number(wordsForTrain) + QString(")"));
     mLetterToWordTrainButton->setFixedSize(0.9 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
 
-    mWordsRainTrainButton = new QPushButton(QString("WordsRain"));
+    wordsForTrain = mDBManager.countWordsForTraining(TrainingType::WordRain);
+    mWordsRainTrainButton = new QPushButton(QString("WordsRain (") + QString::number(wordsForTrain) + QString(")"));
     mWordsRainTrainButton->setFixedSize(0.9 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
 
     int fullyLearnedWords = mDBManager.countFullyLearnedWords();
@@ -72,7 +78,7 @@ void MainWindow::setupCoreWidgets()
 
 void MainWindow::setupCoreWidgetsConnections()
 {
-    connect(mWordIntroTrainButton, &QPushButton::clicked, this, &MainWindow::initBrainstormTraining);
+    connect(mWordIntroTrainButton, &QPushButton::clicked, this, &MainWindow::initWordIntroTraining);
     connect(mWordVariantsTrainButton, &QPushButton::clicked, this, &MainWindow::initWordVariantsTraining);
     connect(mMeaningVariantsTrainButton, &QPushButton::clicked, this, &MainWindow::initMeaningVariantsTraining);
     connect(mLetterToWordTrainButton, &QPushButton::clicked, this, &MainWindow::initLetterToWordTraining);
@@ -119,11 +125,11 @@ void MainWindow::noActiveStates()
     setupCoreWidgetsConnections();
 }
 
-void MainWindow::initBrainstormTraining()
+void MainWindow::initWordIntroTraining()
 {
     mCurrentTrainType = TrainingType::WordIntro;
 
-    mLWords = mDBManager.generateWordsForBrainStorm();
+    mLWords = mDBManager.generateWordsForTraining(mCurrentTrainType);
 
     const int size = 3;
     mTrainStates.clear();
@@ -151,7 +157,7 @@ void MainWindow::initWordVariantsTraining()
 {
     mCurrentTrainType = TrainingType::WordVariants;
 
-    mLWords = mDBManager.generateWordsForBrainStorm();
+    mLWords = mDBManager.generateWordsForTraining(mCurrentTrainType);
 
     mTrainStates.clear();
     mTrainStates.resize(1);
@@ -166,7 +172,7 @@ void MainWindow::initMeaningVariantsTraining()
 {
     mCurrentTrainType = TrainingType::MeaningVariants;
 
-    mLWords = mDBManager.generateWordsForBrainStorm();
+    mLWords = mDBManager.generateWordsForTraining(mCurrentTrainType);
 
     mTrainStates.clear();
     mTrainStates.resize(1);
@@ -181,7 +187,7 @@ void MainWindow::initLetterToWordTraining()
 {
     mCurrentTrainType = TrainingType::LetterToWord;
 
-    mLWords = mDBManager.generateWordsForBrainStorm();
+    mLWords = mDBManager.generateWordsForTraining(mCurrentTrainType);
 
     mTrainStates.clear();
     mTrainStates.resize(1);
@@ -196,7 +202,7 @@ void MainWindow::initWordsRainTraining()
 {
     mCurrentTrainType = TrainingType::WordRain;
 
-    mLWords = mDBManager.generateWordsForBrainStorm();
+    mLWords = mDBManager.generateWordsForTraining(mCurrentTrainType);
 
     mTrainStates.clear();
     mTrainStates.resize(1);

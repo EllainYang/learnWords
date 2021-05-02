@@ -14,7 +14,7 @@ class DatabaseManager : private NonCopyable
         DatabaseManager();
     
     public:
-        std::vector<LearnWord>      generateWordsForBrainStorm();
+        std::vector<LearnWord>      generateWordsForTraining(TrainingType tType) const;
 
         int                         countWordsForTraining(TrainingType tType) const;
         int                         countFullyLearnedWords() const;
