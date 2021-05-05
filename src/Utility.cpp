@@ -83,5 +83,5 @@ const Qt::Key digitToKey[9] = {
     Qt::Key_9,
 };
 
-const int WINDOW_WIDTH = 1000;
-const int WINDOW_HEIGHT = 480;
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 520;

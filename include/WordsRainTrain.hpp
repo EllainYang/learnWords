@@ -19,9 +19,11 @@ class WordsRainTrain : public TrainState
     
     private slots:
         void        askNextWord();
+        void        timeout();
 
     private:
         void        setupCoreWidgets();
+        void        setupConnections();
         void        setupVariantButtons(QHBoxLayout* MainLayout);
 
         void        updateWord();

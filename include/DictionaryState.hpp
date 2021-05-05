@@ -23,11 +23,14 @@ class DictionaryState : public State
     private slots:
         void                searchWord();
         void                addWord();
+        void                unlearnWord();
+        void                deleteWord();
 
     private:
         void                setupCoreWidgets();
         void                setupDictTable();
         void                setupConnections();
+        void                setupButtons();
     
     private:
         QVBoxLayout*                mMainVBoxLayout;
@@ -37,6 +40,8 @@ class DictionaryState : public State
         QSortFilterProxyModel*      mDictSortFitler; 
 
         QPushButton*                mWordAddbutton;  
+        QPushButton*                mWordResetButton;
+        QPushButton*                mWordDeleteButton;
         QPushButton*                mReturnButton;
 };
 
