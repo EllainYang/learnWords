@@ -58,7 +58,6 @@ void WordVariantsTrain::setupVariantButtons()
     mMeaningVariantButtons[mRightMeaningIndx]->setShortcut(QKeySequence(digitToKey[mRightMeaningIndx]));
 }
 
-#include <QDebug>
 void WordVariantsTrain::askNextWord()
 {
     QPushButton* senderButton = qobject_cast<QPushButton*>(sender());
@@ -78,7 +77,6 @@ void WordVariantsTrain::askNextWord()
 
     bool circlePassed;
     bool status = selectNextUnlearnedWord(trainSuccess(), circlePassed);
-    qDebug() << "Status: " << status;
     if (circlePassed)
     {
         emit circlePassedSignal(status);

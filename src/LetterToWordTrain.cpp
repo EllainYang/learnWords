@@ -4,8 +4,6 @@
 
 #include <QString>
 
-#include <iostream>
-
 LetterToWordTrain::LetterToWordTrain(std::vector<LearnWord>& lWords, TrainState::Context context, QWidget* parent)
 : TrainState(lWords, context, 2, parent)
 , mWordGuessIndx(0)
@@ -17,12 +15,10 @@ LetterToWordTrain::LetterToWordTrain(std::vector<LearnWord>& lWords, TrainState:
 
 void LetterToWordTrain::wordGuess()
 {
-    std::cerr << "wordGuess\n";
     QPushButton* senderButton = qobject_cast<QPushButton*>(sender());
     const std::string& curWord = getCurWord();
 
     std::string letter = senderButton->text().toStdString();
-    std::cerr << curWord[mWordGuessIndx] << " " << letter[0] << std::endl;
     if (curWord[mWordGuessIndx] == letter[0])
     {
         clearFailPalettes();
@@ -50,10 +46,8 @@ void LetterToWordTrain::wordGuess()
         // mLWords[mLWordIndx].learnStatus = (mistakes <= 2);
         bool circlePassed;
         bool status = selectNextUnlearnedWord(trainSuccess(), circlePassed);
-        std::cerr << getCurWord() << " " << status << " " << circlePassed << std::endl;
         if (circlePassed)
         {
-            std::cerr << "circlep passed! status: " << status << std::endl;;
             emit circlePassedSignal(status);
         }
        

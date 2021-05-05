@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget* parent)
 , mTrainStateIndx(0)
 , mCurrentTrainType(TrainingType::None)
 {
-    qDebug() << QDir::currentPath();
     QFile file("../style.qss");
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
@@ -216,7 +215,7 @@ void MainWindow::initWordsRainTraining()
     setCentralWidget(mMainWidgetStack);
 }
 
-#include <QDebug>
+
 void MainWindow::initDictionaryState()
 {
     qDebug() << "init dictionary!";
