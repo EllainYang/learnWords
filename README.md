@@ -1,2 +1,2 @@
 # learnWords
-![alt text](https://drive.google.com/file/d/1wzDr0QUezXAgYDdFWtpSVgGvm29E9oAx/view?usp=sharing)
+![alt text](https://github.com/EllainYang/learnWords/blob/main/picturesReadme/main.png?raw=true)
