@@ -3,9 +3,9 @@
 Now it's only a test project.
 Working only in linux, but probably will be not so hard to build in windows/mac since no linux specific libraries was used.
 
-List of dependencies:
-Qt5
-mysql
+**List of dependencies:**
+-Qt5
+-mysql
 
 
 
