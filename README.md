@@ -12,3 +12,5 @@ Working only in linux, but probably it will be not so hard to build in windows/m
 ![alt text](https://github.com/EllainYang/learnWords/blob/main/picturesReadme/dictNullify.png)
 ![alt text](https://github.com/EllainYang/learnWords/blob/main/picturesReadme/rain.png)
 ![alt text](https://github.com/EllainYang/learnWords/blob/main/picturesReadme/train.png)
+
+potato_bitch
